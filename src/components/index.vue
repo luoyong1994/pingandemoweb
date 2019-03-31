@@ -127,6 +127,7 @@ import {
 export default {
   data() {
     return {
+      userId:'',
       items: [
         // {
         //   groupName: "一致性 Consistency",
@@ -223,7 +224,6 @@ export default {
       socket = new WebSocket("ws://localhost:8090/ws");
 
       socket.onmessage = function(event) {
-        console.log(event.data);
         var firstTime = new Date().getTime();
         var unzipStr = transBase64DataAndungzipData(event.data);
         var secondTime = new Date().getTime();
@@ -233,8 +233,11 @@ export default {
         console.log(
           "解压花费毫秒数：" + spendTime + ",数据条数:" + data.length
         );
-        var oldTableData = that.oldTableData;
-        that.$set(that, "tableData", data);
+        if(data.userId){
+          that.$set(that, "userId", data.userId);
+        }else{
+          that.$set(that, "tableData", data);
+        }
       };
 
       socket.onopen = function(event) {
@@ -300,7 +303,7 @@ export default {
       }
       if (this.multipleSelection != undefined) {
         var obj = {};
-        var param = {};
+        obj.userId=this.userId;
         obj.groupName = this.groupName;
         obj.productList = [];
         for (var len = 0; len < this.multipleSelection.length; len++) {
@@ -326,7 +329,7 @@ export default {
     },
 
     selectChange(activeNames) {
-      queryProductGroupInfo({ groupKey: activeNames.groupKey })
+      queryProductGroupInfo({ groupKey: activeNames.groupKey,userId:this.userId})
         .then(res => {
           console.log("重置成功");
           sendMessage({ groupKey: activeNames.groupKey }).then(res => {
