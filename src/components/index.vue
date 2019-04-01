@@ -228,6 +228,7 @@ export default {
         var unzipStr = transBase64DataAndungzipData(event.data);
         var secondTime = new Date().getTime();
         var spendTime = Number(secondTime) - Number(firstTime);
+        unzipStr= decodeURIComponent(unzipStr);
         let data = JSON.parse(unzipStr);
         console.log(data);
         console.log(
